@@ -1,14 +1,15 @@
 let btn = document.querySelector("[data-btn]");
-let section = document.querySelector("[data-products]");
+let productsSection = document.querySelector("[data-products]");
 
 btn.addEventListener("click", async () => {
-  section.innerHTML = `<div class="text-center"><h3>Loading...</h3></div>`;
+  productsSection.innerHTML = `<div class="text-center"><h3>Loading...</h3></div>`;
 
-  let retrieve = await data();
+  try {
+    let getProducts = await getData();
 
-  section.innerHTML = retrieve.products
-    .map((product) => {
-      return `
+    productsSection.innerHTML = getProducts.products
+      .map((product) => {
+        return `
           <div class="border border-border-secondary rounded-2 p-4 col-12 col-sm-6 col-md-4 col-lg-3 shadow-lg" style="width: 18rem;">
             <img
               src="${product.thumbnail}"
@@ -25,12 +26,16 @@ btn.addEventListener("click", async () => {
             </div>
         </div>
         `;
-    })
-    .join("");
+      })
+      .join("");
+  } catch (er) {
+    console.log(er);
+    productsSection.innerHTML = `<div class="text-center text-danger"><h3>Failed to Retrieve Data</h3></div>`;
+  }
 });
 
-async function data() {
-  let resault = await fetch("https://dummyjson.com/products");
+async function getData() {
+  let data = await fetch("https://dummyjson.com/products");
 
-  return await resault.json();
+  return await data.json();
 }
